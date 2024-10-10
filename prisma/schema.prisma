@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  balance   Int
+  students  Student[] // Assuming a user has multiple students
+}
+
+model Student {
+  id         Int          @id @default(autoincrement())
+  user       User         @relation(fields: [user_id], references: [id] , onDelete: Cascade)
+  user_id    Int
+  FromName   String
+  ToName     String
+  Weight    String
+  created_at DateTime     @default(now())
+  attendance Attendance[]
+  
+}
+
+model Attendance {
+  id        Int      @id @default(autoincrement())
+  student   Student  @relation(fields: [studentId], references: [id] , onDelete: Cascade)
+  status    String
+  studentId Int
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model History {
+  id        Int      @id @default(autoincrement())
+  ToName    String
+  FromName  String   
+  Weight    Int   
+  Tracking  String 
+  pdf       Bytes
+  createdAt DateTime @default(now())
+}
+model Label {
+  id          Int    @id @default(autoincrement())
+  TrackingId  String @unique
+}
+model CreateLabel{
+  id        Int      @id @default(autoincrement())
+  ToName    String
+  FromName  String   
+  Weight    Int   
+  createdAt DateTime @default(now())
+}
